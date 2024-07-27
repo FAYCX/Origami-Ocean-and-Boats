@@ -1,2 +1,2 @@
 # Origami-Ocean-and-Boats
-![](boats-screenshot.png)
+<img src="boats-screenshot.png" alt="screenshot of the sketch" width="500" height="300">
