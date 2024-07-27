@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js Sketch</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #p5-canvas {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+  <div id="p5-canvas"></div>
+  <script>
+    let zoffset = 0;
+    let angleOffset = 0;
+    let boatInfo;
+    let noiseScaleslider;
+
+    function setup() {
+      let canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent('p5-canvas');
+      rectMode(ROUND);
+
+      boatInfo = [
+        {
+          x: 500,
+          y: 0,
+          color1: color(199, 143, 22),
+          color2: color(2, 112, 61),
+          velocity: -0.5,
+        },
+        {
+          x: 700,
+          y: 0,
+          color1: color(226, 188, 232),
+          color2: color(14, 4, 128),
+          velocity: -0.5,
+        },
+      ];
+
+      noiseScaleslider = createSlider(-0.002, 0.004, 0.002, 0.0001);
+      noiseScaleslider.position(windowWidth / 2-50, windowHeight-40);
+    }
+
+    function draw() {
+      background(143, 205, 227);
+
+      let noiseLevel = 450;
+      let noiseScale = noiseScaleslider.value();
+
+      for (let x = 0; x < width; x += 1) {
+        let nx = noiseScale * x;
+        let ny = noiseScale * frameCount;
+        let y = noiseLevel * noise(nx, ny);
+        stroke(255);
+        line(x, 0, x, y);
+      }
+
+      for (let boat of boatInfo) {
+        boat.x += boat.velocity;
+
+        if (boat.x < -30) {
+          boat.x = width + 20;
+        }
+
+        let nx = noiseScale * boat.x;
+        let ny = noiseScale * frameCount;
+
+        boat.y = noiseLevel * noise(nx, ny); //Update the boat's y position
+
+        push();
+        translate(boat.x, boat.y - 10);
+
+        let swingAngle = sin(frameCount * 0.1) * QUARTER_PI * 0.05;
+        rotate(swingAngle);
+        drawBoat(0, 0, boat.color1, boat.color2);
+        pop();
+      }
+    }
+
+    function drawBoat(x, y, newColor1, newColor2) {
+      let boatWidth = 60;
+      let boatHeight = 25;
+
+      fill(newColor1);
+      rect(-boatWidth / 2, 0, boatWidth, boatHeight, 5);
+      fill(newColor2);
+      rect(-boatWidth * 0.3, -30, 5, 30);
+      triangle(-boatWidth * 0.7, -30, -boatWidth + 55, -50, -boatWidth + 55, -30);
+    }
+  </script>
+</body>
+</html>
